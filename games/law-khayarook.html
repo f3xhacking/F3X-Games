@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة لو خيروك؟ - F3X GAMES</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #111;
+        }
+        .option-box {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-box:hover {
+            filter: brightness(1.1);
+        }
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+        @keyframes pulse-vs {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); }
+        }
+        .or-badge {
+            animation: pulse-vs 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen select-none">
+
+    <!-- Top Navigation Bar -->
+    <div class="absolute top-0 left-0 right-0 z-30 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 to-transparent">
+        <a href="/" class="flex items-center gap-2 bg-slate-900/80 hover:bg-slate-800 text-white border border-slate-700 px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-md transition-all">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>الرئيسية</span>
+        </a>
+
+        <button id="voiceToggle" class="bg-slate-900/80 hover:bg-slate-800 text-white border border-slate-700 px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-md flex items-center gap-2 transition-all">
+            <i id="voiceIcon" class="fa-solid fa-volume-high text-indigo-400"></i>
+            <span id="voiceStatus">القارئ الصوتي: مفعّل</span>
+        </button>
+    </div>
+
+    <!-- Main Game Split Layout -->
+    <div class="relative flex-1 flex flex-col h-full">
+        
+        <!-- Red Option (Top Section) -->
+        <div id="optionRed" onclick="makeChoice('red')" class="option-box relative flex-1 bg-red-600 hover:bg-red-500 cursor-pointer flex flex-col items-center justify-center p-6 text-white text-center overflow-hidden border-b-4 border-black/30">
+            <div class="max-w-md flex flex-col items-center z-10">
+                <div class="w-28 h-28 md:w-36 md:h-36 mb-4 rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl bg-black/20 flex items-center justify-center">
+                    <img id="imgRed" src="" alt="الخيار الأول" class="w-full h-full object-cover">
+                </div>
+                <h2 id="textRed" class="text-2xl md:text-4xl font-black drop-shadow-lg leading-tight">
+                    جاري التحميل...
+                </h2>
+                
+                <!-- Percentage Stats -->
+                <div id="statsRed" class="hidden mt-4 bg-black/40 px-6 py-2 rounded-full border border-white/20 backdrop-blur-md">
+                    <span id="percentRed" class="text-3xl font-black">0%</span>
+                </div>
+            </div>
+            
+            <!-- Dynamic Background Progress -->
+            <div id="barRed" class="progress-bar absolute bottom-0 left-0 top-0 bg-black/20 w-0"></div>
+        </div>
+
+        <!-- Center Badge 'أو' -->
+        <div class="or-badge absolute top-1/2 left-1/2 z-20 w-16 h-16 md:w-20 md:h-20 bg-black border-4 border-white text-white rounded-full flex items-center justify-center font-black text-xl md:text-2xl shadow-2xl">
+            أو
+        </div>
+
+        <!-- Blue Option (Bottom Section) -->
+        <div id="optionBlue" onclick="makeChoice('blue')" class="option-box relative flex-1 bg-blue-600 hover:bg-blue-500 cursor-pointer flex flex-col items-center justify-center p-6 text-white text-center overflow-hidden">
+            <div class="max-w-md flex flex-col items-center z-10">
+                <h2 id="textBlue" class="text-2xl md:text-4xl font-black drop-shadow-lg leading-tight mb-4">
+                    جاري التحميل...
+                </h2>
+                
+                <!-- Percentage Stats -->
+                <div id="statsBlue" class="hidden mb-4 bg-black/40 px-6 py-2 rounded-full border border-white/20 backdrop-blur-md">
+                    <span id="percentBlue" class="text-3xl font-black">0%</span>
+                </div>
+
+                <div class="w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl bg-black/20 flex items-center justify-center">
+                    <img id="imgBlue" src="" alt="الخيار الثاني" class="w-full h-full object-cover">
+                </div>
+            </div>
+
+            <!-- Dynamic Background Progress -->
+            <div id="barBlue" class="progress-bar absolute bottom-0 left-0 top-0 bg-black/20 w-0"></div>
+        </div>
+    </div>
+
+    <!-- Next Question Button Panel -->
+    <div id="nextPanel" class="hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-30">
+        <button onclick="nextQuestion()" class="bg-amber-400 hover:bg-amber-300 text-black font-black px-8 py-3.5 rounded-full text-lg shadow-2xl hover:scale-105 transition-all flex items-center gap-3">
+            <span>السؤال التالي</span>
+            <i class="fa-solid fa-circle-arrow-left"></i>
+        </button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                redText: "عشاء فاخر مع كريستيانو رونالدو",
+                redImg: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?q=80&w=400&auto=format&fit=crop",
+                blueText: "عشاء مع الشخص الغامض ورؤيته",
+                blueImg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop",
+                redPercent: 72,
+                bluePercent: 28
+            },
+            {
+                redText: "تشرب عصير باذنجان مقابل 10,000 دولار",
+                redImg: "https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=400&auto=format&fit=crop",
+                blueText: "تأخذ الصندوق الغامض وتحصل على محتواه",
+                blueImg: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=400&auto=format&fit=crop",
+                redPercent: 45,
+                bluePercent: 55
+            },
+            {
+                redText: "تصبح فقيراً وتساعد الفقراء",
+                redImg: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=400&auto=format&fit=crop",
+                blueText: "تصبح غنياً جداً مع ثاني شخص يظهر لك بالواتساب",
+                blueImg: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=400&auto=format&fit=crop",
+                redPercent: 31,
+                bluePercent: 69
+            }
+        ];
+
+        let currentIndex = 0;
+        let isVoiceEnabled = true;
+        let hasChosen = false;
+
+        function loadQuestion(index) {
+            hasChosen = false;
+            const q = questions[index];
+
+            document.getElementById('textRed').innerText = q.redText;
+            document.getElementById('imgRed').src = q.redImg;
+            document.getElementById('textBlue').innerText = q.blueText;
+            document.getElementById('imgBlue').src = q.blueImg;
+
+            // Reset UI
+            document.getElementById('statsRed').classList.add('hidden');
+            document.getElementById('statsBlue').classList.add('hidden');
+            document.getElementById('nextPanel').classList.add('hidden');
+            document.getElementById('barRed').style.width = '0%';
+            document.getElementById('barBlue').style.width = '0%';
+
+            if (isVoiceEnabled) {
+                speakText(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
+            }
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function makeChoice(choice) {
+            if (hasChosen) return;
+            hasChosen = true;
+
+            const q = questions[currentIndex];
+            document.getElementById('percentRed').innerText = q.redPercent + '%';
+            document.getElementById('percentBlue').innerText = q.bluePercent + '%';
+
+            document.getElementById('barRed').style.width = q.redPercent + '%';
+            document.getElementById('barBlue').style.width = q.bluePercent + '%';
+
+            document.getElementById('statsRed').classList.remove('hidden');
+            document.getElementById('statsBlue').classList.remove('hidden');
+            document.getElementById('nextPanel').classList.remove('hidden');
+
+            if (isVoiceEnabled) {
+                const chosenPercent = choice === 'red' ? q.redPercent : q.bluePercent;
+                speakText(`اختيارك وافقه ${chosenPercent} بالمئة من اللاعبين`);
+            }
+        }
+
+        function nextQuestion() {
+            currentIndex = (currentIndex + 1) % questions.length;
+            loadQuestion(currentIndex);
+        }
+
+        document.getElementById('voiceToggle').addEventListener('click', () => {
+            isVoiceEnabled = !isVoiceEnabled;
+            document.getElementById('voiceStatus').innerText = isVoiceEnabled ? "القارئ الصوتي: مفعّل" : "القارئ الصوتي: معطل";
+            document.getElementById('voiceIcon').className = isVoiceEnabled ? "fa-solid fa-volume-high text-indigo-400" : "fa-solid fa-volume-xmark text-slate-500";
+            if (!isVoiceEnabled) window.speechSynthesis.cancel();
+        });
+
+        // Initialize First Question
+        window.onload = () => loadQuestion(0);
+    </script>
+</body>
+</html>
