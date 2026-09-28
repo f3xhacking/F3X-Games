@@ -26,7 +26,7 @@
             filter: brightness(1.08);
         }
         .progress-bar {
-            transition: width 1s ease-in-out;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         @keyframes pulse-vs {
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
@@ -48,8 +48,8 @@
 
         <div class="flex items-center gap-2">
             <button id="voiceToggle" class="bg-slate-900/90 hover:bg-slate-800 text-white border border-slate-700/80 px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-md flex items-center gap-2 transition-all shadow-lg">
-                <i id="voiceIcon" class="fa-solid fa-volume-high text-indigo-400"></i>
-                <span id="voiceStatus">الصوت: Adam (ElevenLabs)</span>
+                <i id="voiceIcon" class="fa-solid fa-volume-high text-amber-400"></i>
+                <span id="voiceStatus">القارئ الصوتي: مفعل</span>
             </button>
         </div>
     </div>
@@ -59,7 +59,7 @@
         
         <!-- Red Option (Top Section) -->
         <div id="optionRed" onclick="makeChoice('red')" class="option-box relative flex-1 bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 cursor-pointer flex flex-col items-center justify-center p-6 text-white text-center overflow-hidden border-b-4 border-black/50">
-            <div class="max-w-xl flex flex-col items-center z-10">
+            <div class="max-w-2xl flex flex-col items-center z-10">
                 <div class="w-32 h-32 md:w-44 md:h-44 mb-4 rounded-3xl overflow-hidden border-4 border-white/30 shadow-2xl bg-black/40 flex items-center justify-center transform hover:scale-105 transition-transform">
                     <img id="imgRed" src="" alt="الخيار الأول" class="w-full h-full object-cover">
                 </div>
@@ -68,13 +68,13 @@
                 </h2>
                 
                 <!-- Percentage Stats -->
-                <div id="statsRed" class="hidden mt-4 bg-black/50 px-6 py-2 rounded-2xl border border-white/20 backdrop-blur-md shadow-2xl animate-bounce">
+                <div id="statsRed" class="hidden mt-4 bg-black/60 px-6 py-2 rounded-2xl border border-white/20 backdrop-blur-md shadow-2xl animate-bounce">
                     <span id="percentRed" class="text-3xl md:text-4xl font-black text-amber-400">0%</span>
                 </div>
             </div>
             
             <!-- Dynamic Background Progress -->
-            <div id="barRed" class="progress-bar absolute bottom-0 left-0 top-0 bg-black/30 w-0"></div>
+            <div id="barRed" class="progress-bar absolute bottom-0 left-0 top-0 bg-black/40 w-0"></div>
         </div>
 
         <!-- Center Badge 'أو' -->
@@ -84,13 +84,13 @@
 
         <!-- Blue Option (Bottom Section) -->
         <div id="optionBlue" onclick="makeChoice('blue')" class="option-box relative flex-1 bg-gradient-to-b from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 cursor-pointer flex flex-col items-center justify-center p-6 text-white text-center overflow-hidden">
-            <div class="max-w-xl flex flex-col items-center z-10">
+            <div class="max-w-2xl flex flex-col items-center z-10">
                 <h2 id="textBlue" class="text-2xl md:text-4xl font-black drop-shadow-md leading-tight mb-4 text-white tracking-wide">
                     جاري التحميل...
                 </h2>
                 
                 <!-- Percentage Stats -->
-                <div id="statsBlue" class="hidden mb-4 bg-black/50 px-6 py-2 rounded-2xl border border-white/20 backdrop-blur-md shadow-2xl animate-bounce">
+                <div id="statsBlue" class="hidden mb-4 bg-black/60 px-6 py-2 rounded-2xl border border-white/20 backdrop-blur-md shadow-2xl animate-bounce">
                     <span id="percentBlue" class="text-3xl md:text-4xl font-black text-amber-400">0%</span>
                 </div>
 
@@ -100,14 +100,14 @@
             </div>
 
             <!-- Dynamic Background Progress -->
-            <div id="barBlue" class="progress-bar absolute bottom-0 left-0 top-0 bg-black/30 w-0"></div>
+            <div id="barBlue" class="progress-bar absolute bottom-0 left-0 top-0 bg-black/40 w-0"></div>
         </div>
     </div>
 
     <!-- Next Question Button Panel & Call-To-Action Banner -->
     <div id="nextPanel" class="hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3 w-full max-w-md px-4">
         <!-- CTA Banner for Content Creators -->
-        <div class="bg-slate-900/90 border border-amber-400/50 text-amber-300 text-xs md:text-sm font-bold px-4 py-2 rounded-2xl backdrop-blur-md text-center shadow-xl animate-pulse">
+        <div class="bg-slate-900/95 border border-amber-400/60 text-amber-300 text-xs md:text-sm font-bold px-4 py-2 rounded-2xl backdrop-blur-md text-center shadow-2xl animate-pulse">
             🔥 اشترك بالقناة واعمل منشن لثاني شخص في الواتساب الآن!
         </div>
         <button onclick="nextQuestion()" class="w-full bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-black py-4 rounded-2xl text-lg md:text-xl shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-3 border-2 border-white/40">
@@ -117,105 +117,145 @@
     </div>
 
     <script>
-        // بنك أسئلة عالي الجودة ومخصص لتصوير فيديوهات التحدي
-        const questions = [
+        // بنك أفكار شامل ومتنوع جداً لتصوير الفيديوهات والتفاعلات
+        const rawQuestions = [
             {
-                audioFile: "q1.mp3",
                 redText: "عشاء فاخر مع كريستيانو رونالدو",
                 redImg: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?q=80&w=600&auto=format&fit=crop",
-                blueText: "عشاء مع الشخص الغامض ورؤية وجهه",
-                blueImg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop",
-                redPercent: 74,
-                bluePercent: 26
+                blueText: "تخرج مع ثاني شخص يظهر في الواتساب عندك",
+                blueImg: "https://images.unsplash.com/photo-1614680376593-902f749f7cfc?q=80&w=600&auto=format&fit=crop",
+                redPercent: 68, bluePercent: 32
             },
             {
-                audioFile: "q2.mp3",
-                redText: "تشرب عصير باذنجان مقابل 10,000 دولار",
+                redText: "تشرب كوب عصير باذنجان غريب مقابل 5,000$",
                 redImg: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=600&auto=format&fit=crop",
-                blueText: "تفتح الصندوق الغامض وتأخذ ما بداخله",
+                blueText: "تفتح الصندوق الغامض وتخاطر بكل ما معك",
                 blueImg: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=600&auto=format&fit=crop",
-                redPercent: 42,
-                bluePercent: 58
+                redPercent: 41, bluePercent: 59
             },
             {
-                audioFile: "q3.mp3",
-                redText: "تكسب 100,000$ بشرط تضع لايك واشتراك بالقناة",
+                redText: "تكسب 100,000$ بشرط تشترك بالقناة وتعمل لايك فوراً",
                 redImg: "https://images.unsplash.com/photo-1561414927-6d86591d0c4f?q=80&w=600&auto=format&fit=crop",
-                blueText: "ترفض العرض وترجع لبيتك فوراً",
+                blueText: "ترفض المبلغ وترجع لبيتك بدون أي شيء",
                 blueImg: "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=600&auto=format&fit=crop",
-                redPercent: 91,
-                bluePercent: 9
+                redPercent: 94, bluePercent: 6
             },
             {
-                audioFile: "q4.mp3",
                 redText: "تقابل اليوتيوبر IShowSpeed وتصور معاه فيديو",
                 redImg: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
-                blueText: "تصبح غنياً جداً مع ثاني شخص يظهر لك في الواتساب",
-                blueImg: "https://images.unsplash.com/photo-1614680376593-902f749f7cfc?q=80&w=600&auto=format&fit=crop",
-                redPercent: 38,
-                bluePercent: 62
+                blueText: "تأخذ رحلة مدفوعة بالكامل لليابان مع صديقك المفضل",
+                blueImg: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=600&auto=format&fit=crop",
+                redPercent: 53, bluePercent: 47
+            },
+            {
+                redText: "تأكل أحر فلفل حار في العالم بدون ما تشرب ماء لمدة ساعة",
+                redImg: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?q=80&w=600&auto=format&fit=crop",
+                blueText: "تعطي هاتفك للشخص الخامس في الواتساب لمدة يوم كامل",
+                blueImg: "https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=600&auto=format&fit=crop",
+                redPercent: 35, bluePercent: 65
+            },
+            {
+                redText: "تمتلك القدرة على الاختفاء وقتما تشاء",
+                redImg: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop",
+                blueText: "تمتلك القدرة على قراءة أفكار الآخرين",
+                blueImg: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?q=80&w=600&auto=format&fit=crop",
+                redPercent: 51, bluePercent: 49
+            },
+            {
+                redText: "تعيش سنة كاملة بدون إنترنت أو هاتف ذكي",
+                redImg: "https://images.unsplash.com/photo-1500989145750-8a4a23375811?q=80&w=600&auto=format&fit=crop",
+                blueText: "تعيش سنة كاملة بدون أن تأكل حلويات أو شوكولاتة",
+                blueImg: "https://images.unsplash.com/photo-1581798459219-318e76aecc7b?q=80&w=600&auto=format&fit=crop",
+                redPercent: 22, bluePercent: 78
+            },
+            {
+                redText: "تكون أشهر يوتيوبر في العالم ولكن بدون أرباح",
+                redImg: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600&auto=format&fit=crop",
+                blueText: "تكون مليونير ومجهول تماماً لا أحد يعرفك",
+                blueImg: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=600&auto=format&fit=crop",
+                redPercent: 19, bluePercent: 81
+            },
+            {
+                redText: "تبيت ليلة كاملة داخل منزل مهجور وغامض",
+                redImg: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=600&auto=format&fit=crop",
+                blueText: "تقفز بالمظلة من أعلى قمة جبل في العالم",
+                blueImg: "https://images.unsplash.com/photo-1521651201144-634f700b36ef?q=80&w=600&auto=format&fit=crop",
+                redPercent: 44, bluePercent: 56
+            },
+            {
+                redText: "تأكل وجبة تحتوي على حشرات مقلية مجففة",
+                redImg: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=600&auto=format&fit=crop",
+                blueText: "تستحم بماء مثلج في منتصف فصل الشتاء",
+                blueImg: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=600&auto=format&fit=crop",
+                redPercent: 28, bluePercent: 72
             }
         ];
 
+        let questionsList = [];
         let currentIndex = 0;
         let isVoiceEnabled = true;
         let hasChosen = false;
-        let currentAudio = null;
 
-        function loadQuestion(index) {
+        // خلط الأسئلة عشوائياً (Shuffle Array)
+        function shuffleQuestions() {
+            questionsList = [...rawQuestions].sort(() => Math.random() - 0.5);
+        }
+
+        function loadQuestion() {
             hasChosen = false;
-            const q = questions[index];
+
+            if (currentIndex >= questionsList.length) {
+                shuffleQuestions();
+                currentIndex = 0;
+            }
+
+            const q = questionsList[currentIndex];
 
             document.getElementById('textRed').innerText = q.redText;
             document.getElementById('imgRed').src = q.redImg;
             document.getElementById('textBlue').innerText = q.blueText;
             document.getElementById('imgBlue').src = q.blueImg;
 
-            // Reset UI
+            // Reset UI States
             document.getElementById('statsRed').classList.add('hidden');
             document.getElementById('statsBlue').classList.add('hidden');
             document.getElementById('nextPanel').classList.add('hidden');
             document.getElementById('barRed').style.width = '0%';
             document.getElementById('barBlue').style.width = '0%';
 
-            playVoice(q);
+            speakMaleVoice(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
         }
 
-        function playVoice(q) {
-            if (!isVoiceEnabled) return;
+        // محرك نطق بالصوت الرجالي العربي (Male Arabic Speech Synthesis Engine)
+        function speakMaleVoice(text) {
+            if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
 
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ar-SA';
+            utterance.rate = 0.92; // سرعة القراءة
+            utterance.pitch = 0.8; // خفض نبرة الصوت لتسريعه بصوت رجالي عميق
 
-            // تشغيل الصوت المرفوع في مجلد audio برقم السؤال إذا وُجد
-            if (q.audioFile) {
-                currentAudio = new Audio(`/audio/${q.audioFile}`);
-                currentAudio.play().catch(() => {
-                    // Fallback محرك النطق في حال عدم وجود المقطع الصوتي
-                    speakFallback(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
-                });
-            } else {
-                speakFallback(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
-            }
-        }
+            const voices = window.speechSynthesis.getVoices();
+            // البحث عن صوت عربي ذكوري مسجل بالنظام
+            const maleVoice = voices.find(v => v.lang.includes('ar') && (
+                v.name.toLowerCase().includes('male') || 
+                v.name.toLowerCase().includes('naayf') || 
+                v.name.toLowerCase().includes('maged') ||
+                v.name.toLowerCase().includes('tarik') ||
+                v.name.toLowerCase().includes('adam')
+            )) || voices.find(v => v.lang.includes('ar'));
 
-        function speakFallback(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ar-SA';
-                utterance.rate = 0.95;
-                window.speechSynthesis.speak(utterance);
-            }
+            if (maleVoice) utterance.voice = maleVoice;
+
+            window.speechSynthesis.speak(utterance);
         }
 
         function makeChoice(choice) {
             if (hasChosen) return;
             hasChosen = true;
 
-            const q = questions[currentIndex];
+            const q = questionsList[currentIndex];
             document.getElementById('percentRed').innerText = q.redPercent + '%';
             document.getElementById('percentBlue').innerText = q.bluePercent + '%';
 
@@ -228,22 +268,37 @@
         }
 
         function nextQuestion() {
-            currentIndex = (currentIndex + 1) % questions.length;
-            loadQuestion(currentIndex);
+            currentIndex++;
+            loadQuestion();
         }
 
         document.getElementById('voiceToggle').addEventListener('click', () => {
             isVoiceEnabled = !isVoiceEnabled;
-            document.getElementById('voiceStatus').innerText = isVoiceEnabled ? "الصوت: Adam (ElevenLabs)" : "الصوت: مكتوم";
-            document.getElementById('voiceIcon').className = isVoiceEnabled ? "fa-solid fa-volume-high text-indigo-400" : "fa-solid fa-volume-xmark text-slate-500";
+            document.getElementById('voiceStatus').innerText = isVoiceEnabled ? "القارئ الصوتي: مفعل" : "القارئ الصوتي: مكتوم";
+            document.getElementById('voiceIcon').className = isVoiceEnabled ? "fa-solid fa-volume-high text-amber-400" : "fa-solid fa-volume-xmark text-slate-500";
             if (!isVoiceEnabled) {
-                if (currentAudio) currentAudio.pause();
                 window.speechSynthesis.cancel();
+            } else {
+                const q = questionsList[currentIndex];
+                speakMaleVoice(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
             }
         });
 
-        // Initialize Game
-        window.onload = () => loadQuestion(0);
+        // Ensure voices are loaded properly in browser
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                if (questionsList.length > 0) {
+                    const q = questionsList[currentIndex];
+                    speakMaleVoice(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
+                }
+            };
+        }
+
+        // Initialize Game On Load
+        window.onload = () => {
+            shuffleQuestions();
+            loadQuestion();
+        };
     </script>
 </body>
 </html>
