@@ -3,725 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F3X GAMES - منصة الألعاب الاحترافية</title>
-    <!-- Tailwind CSS -->
+    <title>F3X GAMES - بوابة الألعاب التفاعلية</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            accent: '#6366f1',
+                            hover: '#4f46e5',
+                            red: '#ef4444',
+                            blue: '#3b82f6'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
-        
-        * {
-            font-family: 'Tajawal', sans-serif;
-            scrollbar-width: thin;
-            scrollbar-color: #4c1d95 #0f172a;
-        }
-
         body {
+            font-family: 'Cairo', sans-serif;
             background-color: #0b0f19;
-            color: #f3f4f6;
-            overflow-x: hidden;
+            color: #f8fafc;
         }
-
-        /* Glassmorphism Effect */
-        .glass-panel {
-            background: rgba(22, 27, 46, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .glass-card {
-            background: rgba(26, 32, 53, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            border-color: rgba(124, 58, 237, 0.5);
-            box-shadow: 0 12px 24px -10px rgba(124, 58, 237, 0.3);
-        }
-
-        /* Neon Glows */
-        .neon-purple {
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
-        }
-        .neon-text {
-            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
-        }
-
-        /* Scrollbar customization */
-        ::-webkit-scrollbar {
+        .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
-            height: 6px;
         }
-        ::-webkit-scrollbar-track {
-            background: #0b0f19;
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #2e1065;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #7c3aed;
+        .game-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* Hide scrollbar for category pills */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .game-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.25), 0 8px 10px -6px rgba(99, 102, 241, 0.2);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="bg-[#0b0f19] text-gray-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
 
-    <!-- Header Navbar -->
-    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800 px-4 lg:px-6 py-2.5 flex items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-            <!-- Sidebar Toggle -->
-            <button id="sidebarToggle" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
-                <i data-lucide="menu" class="w-6 h-6"></i>
-            </button>
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             
-            <!-- Brand Logo -->
-            <a href="#" onclick="filterByCategory('all')" class="flex items-center gap-2 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-cyan-500 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-violet-600/30 group-hover:scale-105 transition">
-                    F3X
-                </div>
-                <div class="hidden sm:block">
-                    <span class="text-xl font-black tracking-wider bg-gradient-to-r from-white via-slate-200 to-violet-400 bg-clip-text text-transparent">GAMES</span>
-                    <span class="block text-[10px] text-cyan-400 font-bold uppercase tracking-widest -mt-1">Play Free Online</span>
-                </div>
-            </a>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="flex-1 max-w-xl relative">
-            <div class="relative">
-                <i data-lucide="search" class="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ابحث عن ألعاب، تصنيفات، أو وسوم..." 
-                       class="w-full bg-slate-900/90 border border-slate-700/60 rounded-full py-2 pr-10 pl-4 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition">
+            <!-- Logo & Brand -->
+            <div class="flex items-center gap-3">
+                <button id="mobileMenuBtn" class="lg:hidden text-slate-400 hover:text-white p-2">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <a href="#" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
+                        F3X
+                    </div>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-white via-slate-200 to-indigo-400 bg-clip-text text-transparent">
+                        GAMES
+                    </span>
+                </a>
             </div>
-        </div>
 
-        <!-- User Actions -->
-        <div class="flex items-center gap-3">
-            <button class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-300 hover:bg-slate-800 text-sm font-medium transition">
-                <i data-lucide="bookmark" class="w-4 h-4 text-violet-400"></i>
-                <span>المفضلة</span>
-            </button>
-            <button onclick="toggleThemeModal()" class="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-bold px-4 py-2 rounded-xl shadow-md shadow-violet-900/30 transition active:scale-95">
-                <i data-lucide="user" class="w-4 h-4"></i>
-                <span>تسجيل الدخول</span>
-            </button>
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md relative hidden sm:block">
+                <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="ابحث عن لعبة أو فئة..." 
+                       class="w-full bg-slate-800/80 border border-slate-700/80 rounded-full py-2 pr-10 pl-4 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+            </div>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button class="hidden md:flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all">
+                    <i class="fa-solid fa-fire text-amber-500"></i>
+                    <span>الأعلى تقييماً</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- Quick Category Header Tags -->
-    <div class="bg-slate-950/60 border-b border-slate-800/60 px-4 py-2 overflow-x-auto no-scrollbar flex items-center gap-3">
-        <button onclick="filterByCategory('all')" class="category-pill active flex items-center gap-2 px-4 py-1.5 rounded-xl bg-violet-600 text-white text-xs font-bold whitespace-nowrap shadow-md shadow-violet-600/30 transition hover:bg-violet-500">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-             الكل
-        </button>
-        <button onclick="filterByCategory('adrenaline')" class="category-pill flex items-center gap-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-pink-900/40 to-red-900/40 border border-pink-500/30 text-pink-300 text-xs font-bold whitespace-nowrap transition hover:border-pink-500">
-            🔥 Adrenaline
-        </button>
-        <button onclick="filterByCategory('brain')" class="category-pill flex items-center gap-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 text-cyan-300 text-xs font-bold whitespace-nowrap transition hover:border-cyan-500">
-            🧠 Train your brain
-        </button>
-        <button onclick="filterByCategory('quick')" class="category-pill flex items-center gap-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-900/40 to-orange-900/40 border border-amber-500/30 text-amber-300 text-xs font-bold whitespace-nowrap transition hover:border-amber-500">
-            ⏱️ 5-minute fun
-        </button>
-        <button onclick="filterByCategory('friends')" class="category-pill flex items-center gap-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-900/40 to-teal-900/40 border border-emerald-500/30 text-emerald-300 text-xs font-bold whitespace-nowrap transition hover:border-emerald-500">
-            👥 مع الأصدقاء
-        </button>
-        <button onclick="filterByCategory('arcade')" class="category-pill flex items-center gap-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border border-purple-500/30 text-purple-300 text-xs font-bold whitespace-nowrap transition hover:border-purple-500">
-            🕹️ أركيد كلاسيك
-        </button>
-    </div>
-
-    <div class="flex flex-1 relative">
+    <!-- Main Content Area -->
+    <div class="max-w-7xl mx-auto px-4 lg:px-8 py-6 flex-1 w-full flex gap-6">
         
         <!-- Sidebar Navigation -->
-        <aside id="sidebar" class="w-64 glass-panel border-l border-slate-800 flex-shrink-0 flex flex-col justify-between py-4 transition-all duration-300 z-30 fixed lg:static inset-y-0 right-0 transform translate-x-full lg:translate-x-0 h-[calc(100vh-60px)] overflow-y-auto">
-            <div class="space-y-6 px-3">
-                <!-- Main Nav Links -->
-                <div>
-                    <h3 class="px-3 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">القائمة الرئيسية</h3>
-                    <nav class="space-y-1">
-                        <a href="#" onclick="filterByCategory('all')" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-200 bg-violet-600/20 text-violet-400 font-bold text-sm">
-                            <i data-lucide="home" class="w-4 h-4"></i> الرئيسية
-                        </a>
-                        <a href="#" onclick="filterByCategory('trending')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition">
-                            <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i> الشائعة
-                        </a>
-                        <a href="#" onclick="filterByCategory('new')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i> ألعاب جديدة
-                        </a>
-                        <a href="#" onclick="filterByCategory('multiplayer')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition">
-                            <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> جماعية (Multiplayer)
-                        </a>
-                    </nav>
-                </div>
-
-                <!-- Categories -->
-                <div>
-                    <h3 class="px-3 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">التصنيفات</h3>
-                    <nav class="space-y-1">
-                        <a href="#" onclick="filterByCategory('action')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition">
-                            <i data-lucide="swords" class="w-4 h-4 text-red-400"></i> أكشن ومغامرات
-                        </a>
-                        <a href="#" onclick="filterByCategory('driving')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition">
-                            <i data-lucide="car" class="w-4 h-4 text-amber-400"></i> سيارات وقيادة
-                        </a>
-                        <a href="#" onclick="filterByCategory('shooting')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition">
-                            <i data-lucide="crosshair" class="w-4 h-4 text-purple-400"></i> إطلاق نار (FPS)
-                        </a>
-                        <a href="#" onclick="filterByCategory('arcade')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition">
-                            <i data-lucide="gamepad-2" class="w-4 h-4 text-pink-400"></i> أركيد
-                        </a>
-                        <a href="#" onclick="filterByCategory('brain')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition">
-                            <i data-lucide="brain-circuit" class="w-4 h-4 text-cyan-400"></i> ألعاب ذكاء وألغاز
-                        </a>
-                    </nav>
-                </div>
+        <aside id="sidebar" class="fixed inset-y-0 right-0 z-40 w-64 bg-[#0f172a] border-l border-slate-800 p-4 transform translate-x-full lg:translate-x-0 lg:static lg:bg-transparent lg:border-none transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-between lg:hidden mb-6">
+                <span class="font-bold text-lg text-white">الأقسام والفئات</span>
+                <button id="closeSidebarBtn" class="text-slate-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
             </div>
 
-            <div class="px-4 pt-4 border-t border-slate-800/80 text-xs text-slate-500 text-center">
-                &copy; 2026 F3X Games Inc.<br>جميع الحقوق محفوظة
-            </div>
+            <nav class="space-y-1 text-sm font-semibold">
+                <a href="#" class="sidebar-category active flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-indigo-600/10 text-indigo-400 border border-indigo-500/20" data-category="all">
+                    <i class="fa-solid fa-border-all text-base w-5 text-center"></i>
+                    <span>جميع الألعاب</span>
+                </a>
+                <a href="#" class="sidebar-category flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all" data-category="popular">
+                    <i class="fa-solid fa-[#ff4757] fa-fire text-base w-5 text-center text-amber-500"></i>
+                    <span>الأكثر شائعة</span>
+                </a>
+                <a href="#" class="sidebar-category flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all" data-category="interactive">
+                    <i class="fa-solid fa-comments text-base w-5 text-center text-indigo-400"></i>
+                    <span>تفاعلية وتحديات</span>
+                </a>
+                <a href="#" class="sidebar-category flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all" data-category="horror">
+                    <i class="fa-solid fa-ghost text-base w-5 text-center text-purple-400"></i>
+                    <span>رعب وغموض</span>
+                </a>
+                <a href="#" class="sidebar-category flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all" data-category="action">
+                    <i class="fa-solid fa-gun text-base w-5 text-center text-red-400"></i>
+                    <span>أكشن وتصويب</span>
+                </a>
+            </nav>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 p-4 lg:p-6 overflow-y-auto space-y-8">
-            
-            <!-- Featured Hero Carousel Section -->
-            <section id="heroSection" class="relative rounded-2xl overflow-hidden glass-card p-6 min-h-[280px] sm:min-h-[340px] flex flex-col justify-end border border-violet-500/20">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent z-10"></div>
-                <div id="heroBg" class="absolute inset-0 bg-cover bg-center transition-all duration-700 transform scale-105" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200');"></div>
-                
-                <div class="relative z-20 max-w-2xl space-y-3">
-                    <div class="inline-flex items-center gap-2 bg-violet-600/90 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i> اللعبة المميزة اليوم
-                    </div>
-                    <h1 id="heroTitle" class="text-3xl sm:text-4xl font-black text-white tracking-wide leading-tight">Cyber Space Defender 3D</h1>
-                    <p id="heroDesc" class="text-slate-300 text-sm line-clamp-2">خض معركة الفضاء المستقبلية بالمركبات السريعة وواجه موجات الأعداء في تجربة أكشن ومغامرة حابسة للأنفاس!</p>
-                    
-                    <div class="flex items-center gap-3 pt-2">
-                        <button id="heroPlayBtn" onclick="openGame('space-defender')" class="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-cyan-500 hover:from-violet-500 hover:to-cyan-400 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-violet-600/40 transition transform active:scale-95">
-                            <i data-lucide="play" class="w-5 h-5 fill-current"></i> إلعب الآن مجاناً
-                        </button>
-                        <span class="text-xs text-slate-400 flex items-center gap-1">
-                            <i data-lucide="thumbs-up" class="w-4 h-4 text-emerald-400"></i> 98.4% تقييم إيجابي
+        <!-- Main Content -->
+        <main class="flex-1 min-w-0">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 border border-slate-800 p-6 md:p-8 mb-8 shadow-2xl">
+                <div class="relative z-10 max-w-xl">
+                    <span class="inline-block bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold px-3 py-1 rounded-full mb-3">
+                        تحدي جديد 🔥
+                    </span>
+                    <h1 class="text-2xl md:text-4xl font-black text-white leading-tight mb-3">
+                        لعبة لو خيروك؟ (Would You Rather)
+                    </h1>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-6">
+                        تحدى نفسك وأصدقاءك في اتخاذ قرارات صعبة ومضحكة مع تعليق صوتي كامل وإحصائيات مباشرة!
+                    </p>
+                    <a href="/games/law-khayarook.html" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/30">
+                        <i class="fa-solid fa-play"></i>
+                        <span>العب الآن مجاناً</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Games Grid -->
+            <div class="mb-6 flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-indigo-500"></i>
+                    <span>الألعاب المتاحة</span>
+                </h2>
+            </div>
+
+            <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5">
+                <!-- Game Card -->
+                <div class="game-card bg-slate-800/60 border border-slate-700/60 rounded-2xl overflow-hidden shadow-lg flex flex-col">
+                    <div class="relative aspect-video overflow-hidden bg-slate-900">
+                        <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?q=80&w=800&auto=format&fit=crop" 
+                             alt="لو خيروك" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                        <span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-md shadow">
+                            تفاعلي
                         </span>
                     </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <div>
+                            <h3 class="font-bold text-lg text-white mb-1">لو خيروك؟</h3>
+                            <p class="text-slate-400 text-xs line-clamp-2 leading-relaxed mb-4">
+                                خيارات متعددة وإحراجات ممتعة مع تعليق صوتي ونسب اختيار حقيقية!
+                            </p>
+                        </div>
+                        <a href="/games/law-khayarook.html" 
+                           class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-play text-xs"></i>
+                            <span>بدء اللعبة</span>
+                        </a>
+                    </div>
                 </div>
-            </section>
-
-            <!-- Games Grid Section: Best Picks -->
-            <section class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i data-lucide="thumbs-up" class="w-5 h-5 text-violet-400"></i>
-                        أفضل الاختيارات لك (Top Picks)
-                    </h2>
-                    <span class="text-xs text-slate-400 font-medium">محدّث تلقائياً</span>
-                </div>
-
-                <div id="topPicksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
-                    <!-- Dynamic Cards Rendered by JS -->
-                </div>
-            </section>
-
-            <!-- Games Grid Section: Featured Games -->
-            <section class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i data-lucide="award" class="w-5 h-5 text-amber-400"></i>
-                        ألعاب مميزة (Featured Games)
-                    </h2>
-                </div>
-
-                <div id="featuredGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
-                    <!-- Dynamic Cards Rendered by JS -->
-                </div>
-            </section>
-
-            <!-- Games Grid Section: All Games -->
-            <section class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 id="sectionTitle" class="text-xl font-bold text-white flex items-center gap-2">
-                        <i data-lucide="gamepad" class="w-5 h-5 text-cyan-400"></i>
-                        جميع الألعاب المتاحة
-                    </h2>
-                </div>
-
-                <div id="allGamesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
-                    <!-- Dynamic Cards Rendered by JS -->
-                </div>
-            </section>
+            </div>
         </main>
     </div>
 
-    <!-- Game Player Modal View Overlay -->
-    <div id="gameModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex flex-col justify-center items-center p-2 sm:p-4 transition-all">
-        <div class="w-full max-w-5xl glass-panel rounded-2xl overflow-hidden border border-violet-500/30 flex flex-col max-h-[95vh] shadow-2xl">
-            
-            <!-- Modal Header -->
-            <div class="bg-slate-900/90 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <span id="modalGameBadge" class="text-xs bg-violet-600/30 text-violet-300 border border-violet-500/40 px-2.5 py-0.5 rounded-full font-bold">أركيد</span>
-                    <h3 id="modalGameTitle" class="text-lg font-bold text-white">عنوان اللعبة</h3>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="toggleFullscreen()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition" title="ملء الشاشة">
-                        <i data-lucide="maximize-2" class="w-5 h-5"></i>
-                    </button>
-                    <button onclick="closeGameModal()" class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition" title="إغلاق">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Game Display Viewport Canvas/Container -->
-            <div class="relative bg-black flex-1 flex items-center justify-center overflow-hidden min-h-[360px] sm:min-h-[480px]" id="gameContainer">
-                <canvas id="gameCanvas" class="w-full h-full max-w-full max-h-full object-contain"></canvas>
-            </div>
-
-            <!-- Modal Footer Controls & Description -->
-            <div class="bg-slate-900/90 p-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm">
-                <div>
-                    <p id="modalGameDesc" class="text-slate-300 text-xs sm:text-sm">الوصف التوضيحي للعبة وعناصر التحكم...</p>
-                    <div id="modalControlsInfo" class="mt-1 text-xs text-cyan-400 font-mono">التحكم: الأسهم أو WASD للتحرك | المسافة للإطلاق</div>
-                </div>
-                <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                    <button onclick="likeGame()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl transition text-xs font-bold">
-                        <i data-lucide="thumbs-up" class="w-4 h-4 text-emerald-400"></i>
-                        <span id="likeCount">1.2K</span>
-                    </button>
-                    <button onclick="shareGame()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl transition text-xs font-bold">
-                        <i data-lucide="share-2" class="w-4 h-4 text-cyan-400"></i>
-                        مشاركة
-                    </button>
-                </div>
-            </div>
+    <!-- Footer -->
+    <footer class="bg-[#0f172a] border-t border-slate-800 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>© 2026 F3X GAMES. جميع الحقوق محفوظة.</p>
         </div>
-    </div>
+    </footer>
 
     <script>
-        // Game Catalog Data Database
-        const GAMES_DATA = [
-            {
-                id: "space-defender",
-                title: "Cyber Space Defender 3D",
-                category: "action",
-                badge: "Adrenaline",
-                tags: ["adrenaline", "action", "shooting"],
-                rating: "4.9",
-                plays: "142K",
-                bgImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600",
-                desc: "واجه سفن الفضاء المعادية واحمي مجرتك في لعبة إطلاق نار الفضاء الممتعة!",
-                controls: "استخدم أسهم اللوحة (أو A/D) للتحرك ومفتاح المسافة للإطلاق."
-            },
-            {
-                id: "cyber-runner",
-                title: "Neon Runner 2077",
-                category: "quick",
-                badge: "5-minute fun",
-                tags: ["quick", "arcade", "adrenaline"],
-                rating: "4.7",
-                plays: "98K",
-                bgImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600",
-                desc: "اركض وتجنب الحواجز السايبر بنك في عالم النيون ثلاثي الأبعاد المثير!",
-                controls: "مفتاح السهم للأعلى أو المسافة للقفز."
-            },
-            {
-                id: "classic-snake",
-                title: "Retro Snake Classic",
-                category: "brain",
-                badge: "Train your brain",
-                tags: ["brain", "arcade", "friends"],
-                rating: "4.8",
-                plays: "210K",
-                bgImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600",
-                desc: "اللعبة الكلاسيكية المحبوبة في ثوب جديد ومؤثرات حديثة!",
-                controls: "استخدم أسهم الاتجاهات للتوجيه واجمع النقاط."
-            },
-            {
-                id: "pixel-racer",
-                title: "Pixel Turbo Racing",
-                category: "driving",
-                badge: "Adrenaline",
-                tags: ["driving", "adrenaline"],
-                rating: "4.6",
-                plays: "76K",
-                bgImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600",
-                desc: "تحدى السرعة وتفادى السيارات الأخرى على الطريق السريع!",
-                controls: "الأسهم لليمين ولليار للقيادة."
-            },
-            {
-                id: "block-puzzle",
-                title: "Mind Blocks Strategy",
-                category: "brain",
-                badge: "Train your brain",
-                tags: ["brain", "quick"],
-                rating: "4.9",
-                plays: "115K",
-                bgImage: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600",
-                desc: "لعبة ترتيب المكعبات واستراتيجيات الذكاء الرائعة لتنشيط العقل.",
-                controls: "التحكم بالماوس أو اللمس لوضع المكعبات."
-            },
-            {
-                id: "arena-showdown",
-                title: "Squad Arena Battle",
-                category: "multiplayer",
-                badge: "مع الأصدقاء",
-                tags: ["multiplayer", "friends", "shooting"],
-                rating: "4.8",
-                plays: "305K",
-                bgImage: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=600",
-                desc: "معركة مع الأصدقاء في الساحة التنافسية للسيطرة على المناطق!",
-                controls: "WASD للتحرك والزر الأيسر للماوس لإطلاق النار."
-            }
-        ];
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebar = document.getElementById('sidebar');
 
-        let currentGameLoop = null;
-
-        window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            renderAllSections(GAMES_DATA);
-
-            // Sidebar Toggle
-            const sidebar = document.getElementById('sidebar');
-            document.getElementById('sidebarToggle').addEventListener('click', () => {
-                sidebar.classList.toggle('translate-x-full');
-            });
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('translate-x-full');
         });
 
-        // Function to create game card HTML
-        function createGameCard(game) {
-            return `
-                <div onclick="openGame('${game.id}')" class="glass-card rounded-2xl overflow-hidden cursor-pointer flex flex-col group relative">
-                    <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
-                        <img src="${game.bgImage}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
-                        
-                        <span class="absolute top-2 right-2 bg-slate-900/80 text-violet-300 text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md border border-violet-500/30">
-                            ${game.badge}
-                        </span>
-
-                        <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between text-xs text-slate-300">
-                            <span class="flex items-center gap-1 bg-slate-900/60 px-2 py-0.5 rounded-md backdrop-blur-sm">
-                                <i data-lucide="star" class="w-3 h-3 text-amber-400 fill-amber-400"></i> ${game.rating}
-                            </span>
-                            <span class="text-[10px] text-slate-400">${game.plays} لعب</span>
-                        </div>
-                    </div>
-                    <div class="p-3 flex-1 flex flex-col justify-between">
-                        <h4 class="font-bold text-sm text-slate-100 group-hover:text-violet-400 transition line-clamp-1">${game.title}</h4>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderAllSections(games) {
-            const topPicks = games.slice(0, 3);
-            const featured = games.slice(1, 5);
-
-            document.getElementById('topPicksGrid').innerHTML = topPicks.map(createGameCard).join('');
-            document.getElementById('featuredGrid').innerHTML = featured.map(createGameCard).join('');
-            document.getElementById('allGamesGrid').innerHTML = games.map(createGameCard).join('');
-            
-            lucide.createIcons();
-        }
-
-        // Search Filter Engine
-        function handleSearch() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const filtered = GAMES_DATA.filter(g => 
-                g.title.toLowerCase().includes(query) || 
-                g.category.toLowerCase().includes(query) ||
-                g.tags.some(t => t.includes(query))
-            );
-            document.getElementById('allGamesGrid').innerHTML = filtered.map(createGameCard).join('');
-            document.getElementById('sectionTitle').innerText = query ? `نتائج البحث عن: (${query})` : "جميع الألعاب المتاحة";
-            lucide.createIcons();
-        }
-
-        // Category Filter Navigation
-        function filterByCategory(cat) {
-            document.querySelectorAll('.category-pill').forEach(btn => btn.classList.remove('bg-violet-600', 'text-white'));
-            
-            if (cat === 'all') {
-                renderAllSections(GAMES_DATA);
-                document.getElementById('sectionTitle').innerText = "جميع الألعاب المتاحة";
-            } else {
-                const filtered = GAMES_DATA.filter(g => g.tags.includes(cat) || g.category === cat);
-                document.getElementById('allGamesGrid').innerHTML = filtered.map(createGameCard).join('');
-                document.getElementById('sectionTitle').innerText = `تصنيف: ${cat.toUpperCase()}`;
-            }
-            lucide.createIcons();
-        }
-
-        function openGame(gameId) {
-            const game = GAMES_DATA.find(g => g.id === gameId) || GAMES_DATA[0];
-            
-            document.getElementById('modalGameTitle').innerText = game.title;
-            document.getElementById('modalGameBadge').innerText = game.badge;
-            document.getElementById('modalGameDesc').innerText = game.desc;
-            document.getElementById('modalControlsInfo').innerText = `طريقة اللعب: ${game.controls}`;
-            
-            const modal = document.getElementById('gameModal');
-            modal.classList.remove('hidden');
-
-            // Cancel any previous active game loop
-            if (currentGameLoop) cancelAnimationFrame(currentGameLoop);
-
-            // Start Canvas Game Engine
-            initCanvasGame(game.id);
-        }
-
-        function closeGameModal() {
-            document.getElementById('gameModal').classList.add('hidden');
-            if (currentGameLoop) cancelAnimationFrame(currentGameLoop);
-        }
-
-        function toggleFullscreen() {
-            const container = document.getElementById('gameContainer');
-            if (!document.fullscreenElement) {
-                container.requestFullscreen().catch(err => alert(`Error: ${err.message}`));
-            } else {
-                document.exitFullscreen();
-            }
-        }
-
-        function likeGame() {
-            const el = document.getElementById('likeCount');
-            el.innerText = '1.3K 👍';
-        }
-
-        function shareGame() {
-            navigator.clipboard.writeText(window.location.href);
-            alert('تم نسخ رابط اللعبة بنجاح!');
-        }
-
-        function initCanvasGame(gameId) {
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Auto resize canvas resolution
-            canvas.width = 800;
-            canvas.height = 450;
-
-            if (gameId === 'space-defender' || gameId === 'arena-showdown') {
-                runSpaceDefender(canvas, ctx);
-            } else if (gameId === 'classic-snake') {
-                runSnakeGame(canvas, ctx);
-            } else {
-                runCyberRunner(canvas, ctx);
-            }
-        }
-
-        // --- Game 1: Space Defender Canvas Mini-Game ---
-        function runSpaceDefender(canvas, ctx) {
-            let player = { x: canvas.width / 2 - 20, y: canvas.height - 50, w: 40, h: 30, speed: 6 };
-            let bullets = [];
-            let enemies = [];
-            let score = 0;
-            let keys = {};
-
-            window.onkeydown = (e) => keys[e.code] = true;
-            window.onkeyup = (e) => keys[e.code] = false;
-
-            function spawnEnemy() {
-                if (Math.random() < 0.03) {
-                    enemies.push({ x: Math.random() * (canvas.width - 30), y: -30, w: 30, h: 30, speed: 2 + Math.random() * 2 });
-                }
-            }
-
-            function update() {
-                if (keys['ArrowLeft'] || keys['KeyA']) player.x = Math.max(0, player.x - player.speed);
-                if (keys['ArrowRight'] || keys['KeyD']) player.x = Math.min(canvas.width - player.w, player.x + player.speed);
-                
-                if (keys['Space']) {
-                    if (!player.lastShoot || Date.now() - player.lastShoot > 180) {
-                        bullets.push({ x: player.x + player.w / 2 - 3, y: player.y, w: 6, h: 12 });
-                        player.lastShoot = Date.now();
-                    }
-                }
-
-                bullets.forEach((b, index) => {
-                    b.y -= 8;
-                    if (b.y < 0) bullets.splice(index, 1);
-                });
-
-                enemies.forEach((e, eIdx) => {
-                    e.y += e.speed;
-                    // Collision with bullets
-                    bullets.forEach((b, bIdx) => {
-                        if (b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
-                            enemies.splice(eIdx, 1);
-                            bullets.splice(bIdx, 1);
-                            score += 10;
-                        }
-                    });
-                });
-
-                spawnEnemy();
-            }
-
-            function draw() {
-                ctx.fillStyle = '#0b0f19';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Player Ship
-                ctx.fillStyle = '#06b6d4';
-                ctx.beginPath();
-                ctx.moveTo(player.x + player.w / 2, player.y);
-                ctx.lineTo(player.x + player.w, player.y + player.h);
-                ctx.lineTo(player.x, player.y + player.h);
-                ctx.closePath();
-                ctx.fill();
-
-                // Bullets
-                ctx.fillStyle = '#a855f7';
-                bullets.forEach(b => ctx.fillRect(b.x, b.y, b.w, b.h));
-
-                // Enemies
-                ctx.fillStyle = '#ef4444';
-                enemies.forEach(e => ctx.fillRect(e.x, e.y, e.w, e.h));
-
-                // Score Display
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 18px Tajawal, sans-serif';
-                ctx.fillText(`النتيجة: ${score}`, 20, 35);
-            }
-
-            function loop() {
-                update();
-                draw();
-                currentGameLoop = requestAnimationFrame(loop);
-            }
-            loop();
-        }
-
-        // --- Game 2: Classic Snake Mini-Game ---
-        function runSnakeGame(canvas, ctx) {
-            const grid = 20;
-            let snake = [{ x: 160, y: 200 }, { x: 140, y: 200 }, { x: 120, y: 200 }];
-            let dx = grid, dy = 0;
-            let food = { x: 300, y: 200 };
-            let score = 0;
-
-            window.onkeydown = (e) => {
-                if (e.code === 'ArrowUp' && dy === 0) { dx = 0; dy = -grid; }
-                if (e.code === 'ArrowDown' && dy === 0) { dx = 0; dy = grid; }
-                if (e.code === 'ArrowLeft' && dx === 0) { dx = -grid; dy = 0; }
-                if (e.code === 'ArrowRight' && dx === 0) { dx = grid; dy = 0; }
-            };
-
-            let lastTime = 0;
-            function loop(time) {
-                currentGameLoop = requestAnimationFrame(loop);
-                if (time - lastTime < 100) return; // Speed control
-                lastTime = time;
-
-                // Move Snake
-                const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-                snake.unshift(head);
-
-                if (head.x === food.x && head.y === food.y) {
-                    score += 10;
-                    food = {
-                        x: Math.floor(Math.random() * (canvas.width / grid)) * grid,
-                        y: Math.floor(Math.random() * (canvas.height / grid)) * grid
-                    };
-                } else {
-                    snake.pop();
-                }
-
-                // Draw Frame
-                ctx.fillStyle = '#0f172a';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Food
-                ctx.fillStyle = '#f59e0b';
-                ctx.fillRect(food.x, food.y, grid - 2, grid - 2);
-
-                // Snake
-                ctx.fillStyle = '#10b981';
-                snake.forEach((s, idx) => {
-                    ctx.fillStyle = idx === 0 ? '#34d399' : '#10b981';
-                    ctx.fillRect(s.x, s.y, grid - 2, grid - 2);
-                });
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 18px Tajawal';
-                ctx.fillText(`النقاط: ${score}`, 20, 35);
-            }
-            loop(0);
-        }
-
-        // --- Game 3: Cyber Runner Mini-Game ---
-        function runCyberRunner(canvas, ctx) {
-            let runner = { x: 80, y: canvas.height - 80, w: 30, h: 50, vy: 0, jumping: false };
-            let obstacles = [];
-            let score = 0;
-
-            window.onkeydown = (e) => {
-                if ((e.code === 'Space' || e.code === 'ArrowUp') && !runner.jumping) {
-                    runner.vy = -12;
-                    runner.jumping = true;
-                }
-            };
-
-            function loop() {
-                // Physics
-                runner.vy += 0.6;
-                runner.y += runner.vy;
-
-                if (runner.y >= canvas.height - 80) {
-                    runner.y = canvas.height - 80;
-                    runner.vy = 0;
-                    runner.jumping = false;
-                }
-
-                if (Math.random() < 0.015) {
-                    obstacles.push({ x: canvas.width, y: canvas.height - 60, w: 20, h: 30 });
-                }
-
-                ctx.fillStyle = '#1e1b4b';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Ground
-                ctx.fillStyle = '#4c1d95';
-                ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
-
-                // Runner
-                ctx.fillStyle = '#06b6d4';
-                ctx.fillRect(runner.x, runner.y, runner.w, runner.h);
-
-                // Obstacles
-                ctx.fillStyle = '#f43f5e';
-                obstacles.forEach((ob, idx) => {
-                    ob.x -= 6;
-                    ctx.fillRect(ob.x, ob.y, ob.w, ob.h);
-                    if (ob.x < -20) obstacles.splice(idx, 1);
-                });
-
-                score++;
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 18px Tajawal';
-                ctx.fillText(`النتيجة: ${Math.floor(score / 5)}`, 20, 35);
-
-                currentGameLoop = requestAnimationFrame(loop);
-            }
-            loop();
-        }
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('translate-x-full');
+        });
     </script>
 </body>
 </html>
