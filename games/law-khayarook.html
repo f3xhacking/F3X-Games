@@ -37,19 +37,108 @@
         }
     </style>
 </head>
-<body class="flex flex-col h-screen select-none">
+<body class="flex flex-col h-screen select-none text-white">
 
-    <!-- Top Navigation Bar -->
-    <div class="absolute top-0 left-0 right-0 z-30 flex items-center justify-between p-4 bg-gradient-to-b from-black/90 via-black/40 to-transparent">
+    <!-- Top Navigation & Scoreboard Bar -->
+    <div class="absolute top-0 left-0 right-0 z-30 flex items-center justify-between p-4 bg-gradient-to-b from-black/90 via-black/50 to-transparent">
         <a href="/" class="flex items-center gap-2 bg-slate-900/90 hover:bg-slate-800 text-white border border-slate-700/80 px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-md transition-all shadow-lg">
             <i class="fa-solid fa-arrow-right"></i>
-            <span>الرئيسية</span>
+            <span class="hidden sm:inline">الرئيسية</span>
         </a>
 
+        <!-- Score & Minus Counter -->
+        <div id="gameScoreBar" class="hidden flex items-center gap-6 bg-slate-950/80 border border-slate-800 px-6 py-2 rounded-2xl backdrop-blur-md shadow-2xl">
+            <!-- Win Score -->
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-amber-400 text-lg"></i>
+                <span class="text-xs text-slate-400">المكسب:</span>
+                <span id="scoreWin" class="text-xl font-black text-emerald-400">0</span>
+            </div>
+            
+            <div class="h-6 w-[1px] bg-slate-700"></div>
+
+            <!-- Timer Display -->
+            <div id="timerDisplay" class="flex items-center gap-2 font-black text-amber-400 text-xl px-2">
+                <i class="fa-solid fa-stopwatch animate-pulse"></i>
+                <span id="timerText">10</span>s
+            </div>
+
+            <div class="h-6 w-[1px] bg-slate-700"></div>
+
+            <!-- Minus Loss Score -->
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-heart-crack text-red-500 text-lg"></i>
+                <span class="text-xs text-slate-400">الماينص:</span>
+                <span id="scoreMinus" class="text-xl font-black text-red-500">0</span>
+            </div>
+        </div>
+
         <div class="flex items-center gap-2">
-            <button id="voiceToggle" class="bg-slate-900/90 hover:bg-slate-800 text-white border border-slate-700/80 px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-md flex items-center gap-2 transition-all shadow-lg">
-                <i id="voiceIcon" class="fa-solid fa-volume-high text-amber-400"></i>
-                <span id="voiceStatus">القارئ العربي: مفعل</span>
+            <button onclick="openSettings()" class="bg-slate-900/90 hover:bg-slate-800 text-white border border-slate-700/80 p-3 rounded-xl text-sm font-bold backdrop-blur-md transition-all shadow-lg">
+                <i class="fa-solid fa-gear text-amber-400"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- START MENU SCREEN (واجهة اللعبة الرئيسية) -->
+    <div id="startScreen" class="absolute inset-0 z-40 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center backdrop-blur-lg">
+        <div class="max-w-md w-full bg-slate-900/80 border border-slate-800 p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-6">
+            <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-yellow-500 rounded-3xl flex items-center justify-center shadow-lg transform -rotate-6">
+                <i class="fa-solid fa-gamepad text-slate-950 text-4xl"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-black text-white mb-2">لعبة لو خيروك؟</h1>
+                <p class="text-slate-400 text-sm">أقوى التحديات والخيارات المجنونة لتصوير الفيديوهات!</p>
+            </div>
+
+            <div class="flex flex-col gap-3 w-full">
+                <button onclick="startGame()" class="w-full bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-black py-4 rounded-2xl text-xl shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-play"></i>
+                    <span>بدء اللعبة</span>
+                </button>
+                <button onclick="openSettings()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3.5 rounded-2xl border border-slate-700 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-sliders text-amber-400"></i>
+                    <span>إعدادات اللعبة</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL (نافذة الإعدادات) -->
+    <div id="settingsModal" class="hidden absolute inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col gap-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h3 class="text-xl font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-amber-400"></i>
+                    إعدادات اللعبة
+                </h3>
+                <button onclick="closeSettings()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <!-- Timer Option -->
+                <div class="flex items-center justify-between bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-sm">خاصية العداد التنازلي</span>
+                        <span class="text-xs text-slate-400">10 ثوانٍ للإجابة مع صوت التكتاك</span>
+                    </div>
+                    <input type="checkbox" id="timerToggle" checked class="w-5 h-5 accent-amber-400 cursor-pointer">
+                </div>
+
+                <!-- Voice Reader Option -->
+                <div class="flex items-center justify-between bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-sm">القارئ الصوتي العربي</span>
+                        <span class="text-xs text-slate-400">قراءة الأسئلة بصوت رجالي تلقائياً</span>
+                    </div>
+                    <input type="checkbox" id="voiceToggleCheck" checked class="w-5 h-5 accent-amber-400 cursor-pointer">
+                </div>
+            </div>
+
+            <button onclick="closeSettings()" class="w-full bg-amber-400 text-slate-950 font-black py-3 rounded-xl hover:bg-amber-300 transition-all">
+                حفظ وإغلاق
             </button>
         </div>
     </div>
@@ -73,7 +162,6 @@
                 </div>
             </div>
             
-            <!-- Dynamic Background Progress -->
             <div id="barRed" class="progress-bar absolute bottom-0 left-0 top-0 bg-black/40 w-0"></div>
         </div>
 
@@ -99,14 +187,12 @@
                 </div>
             </div>
 
-            <!-- Dynamic Background Progress -->
             <div id="barBlue" class="progress-bar absolute bottom-0 left-0 top-0 bg-black/40 w-0"></div>
         </div>
     </div>
 
     <!-- Next Question Button Panel & Call-To-Action Banner -->
     <div id="nextPanel" class="hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3 w-full max-w-md px-4">
-        <!-- CTA Banner for Content Creators -->
         <div class="bg-slate-900/95 border border-amber-400/60 text-amber-300 text-xs md:text-sm font-bold px-4 py-2 rounded-2xl backdrop-blur-md text-center shadow-2xl animate-pulse">
             🔥 اشترك بالقناة واعمل منشن لثاني شخص في الواتساب الآن!
         </div>
@@ -117,14 +203,21 @@
     </div>
 
     <script>
-        // بنك أفكار شامل ومتنوع جداً لتصوير الفيديوهات
+        // بنك أفكار ضخم وشامل مع جعل السؤال الأول دايماً هو الموقف الجذاب
         const rawQuestions = [
             {
-                redText: "عشاء فاخر مع كريستيانو رونالدو",
+                redText: "عشاء فاخر مع كريستيانو رونالدو مقابل الاشتراك بالصفحة",
                 redImg: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?q=80&w=600&auto=format&fit=crop",
-                blueText: "تخرج مع ثاني شخص يظهر في الواتساب عندك",
-                blueImg: "https://images.unsplash.com/photo-1614680376593-902f749f7cfc?q=80&w=600&auto=format&fit=crop",
-                redPercent: 68, bluePercent: 32
+                blueText: "تعيش لمدة يوم كامل مع الشخص الغامض وتتعرف على هويته",
+                blueImg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop",
+                redPercent: 72, bluePercent: 28
+            },
+            {
+                redText: "تنقذ صديقك المفضل من الغرق بآخر لحظة",
+                redImg: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop",
+                blueText: "تأخذ مليون جنيه بشرط ترسل لكل أصحابك بالواتساب 'أنتم عوض عبيط'",
+                blueImg: "https://images.unsplash.com/photo-1561414927-6d86591d0c4f?q=80&w=600&auto=format&fit=crop",
+                redPercent: 61, bluePercent: 39
             },
             {
                 redText: "تشرب كوب عصير باذنجان غريب مقابل 5,000 دولار",
@@ -134,18 +227,18 @@
                 redPercent: 41, bluePercent: 59
             },
             {
-                redText: "تكسب 100,000 دولار بشرط تشترك بالقناة وتعمل لايك فوراً",
-                redImg: "https://images.unsplash.com/photo-1561414927-6d86591d0c4f?q=80&w=600&auto=format&fit=crop",
-                blueText: "ترفض المبلغ وترجع لبيتك بدون أي شيء",
-                blueImg: "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=600&auto=format&fit=crop",
-                redPercent: 94, bluePercent: 6
+                redText: "تقابل اليوتيوبر سبيد وتصور معاه فيديو للظهور على قناته",
+                redImg: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
+                blueText: "تأخذ رحلة مدفوعة بالكامل لليابان مع ثاني شخص بالواتساب",
+                blueImg: "https://images.unsplash.com/photo-1614680376593-902f749f7cfc?q=80&w=600&auto=format&fit=crop",
+                redPercent: 53, bluePercent: 47
             },
             {
-                redText: "تقابل اليوتيوبر سبيد وتصور معاه فيديو",
-                redImg: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
-                blueText: "تأخذ رحلة مدفوعة بالكامل لليابان مع صديقك المفضل",
-                blueImg: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=600&auto=format&fit=crop",
-                redPercent: 53, bluePercent: 47
+                redText: "تكسب 100,000 دولار بشرط تضع لايك واشتراك للقناة فوراً",
+                redImg: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=600&auto=format&fit=crop",
+                blueText: "ترفض المبلغ وترجع لبيتك بدون أي شيء",
+                blueImg: "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=600&auto=format&fit=crop",
+                redPercent: 95, bluePercent: 5
             },
             {
                 redText: "تأكل أحر فلفل حار في العالم بدون ما تشرب ماء لمدة ساعة",
@@ -167,42 +260,60 @@
                 blueText: "تعيش سنة كاملة بدون أن تأكل حلويات أو شوكولاتة",
                 blueImg: "https://images.unsplash.com/photo-1581798459219-318e76aecc7b?q=80&w=600&auto=format&fit=crop",
                 redPercent: 22, bluePercent: 78
-            },
-            {
-                redText: "تكون أشهر يوتيوبر في العالم ولكن بدون أرباح",
-                redImg: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600&auto=format&fit=crop",
-                blueText: "تكون مليونير ومجهول تماماً لا أحد يعرفك",
-                blueImg: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=600&auto=format&fit=crop",
-                redPercent: 19, bluePercent: 81
-            },
-            {
-                redText: "تبيت ليلة كاملة داخل منزل مهجور وغامض",
-                redImg: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=600&auto=format&fit=crop",
-                blueText: "تقفز بالمظلة من أعلى قمة جبل في العالم",
-                blueImg: "https://images.unsplash.com/photo-1521651201144-634f700b36ef?q=80&w=600&auto=format&fit=crop",
-                redPercent: 44, bluePercent: 56
-            },
-            {
-                redText: "تأكل وجبة تحتوي على حشرات مقلية مجففة",
-                redImg: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=600&auto=format&fit=crop",
-                blueText: "تستحم بماء مثلج في منتصف فصل الشتاء",
-                blueImg: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=600&auto=format&fit=crop",
-                redPercent: 28, bluePercent: 72
             }
         ];
 
         let questionsList = [];
         let currentIndex = 0;
-        let isVoiceEnabled = true;
         let hasChosen = false;
+        let scoreWins = 0;
+        let scoreMinuses = 0;
 
-        // خلط الأسئلة عشوائياً بدون توقف
+        // Timer Variables
+        let timerInterval = null;
+        let timeLeft = 10;
+        let isTimerActive = true;
+        let audioContext = null;
+
         function shuffleQuestions() {
-            questionsList = [...rawQuestions].sort(() => Math.random() - 0.5);
+            // المحافظة على السؤال الأول دايماً بالبدء ثم خلط باقي الأسئلة عشوائياً
+            const firstQuestion = rawQuestions[0];
+            const remaining = rawQuestions.slice(1).sort(() => Math.random() - 0.5);
+            questionsList = [firstQuestion, ...remaining];
+        }
+
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScoreBar').classList.remove('hidden');
+            
+            // Audio Context for Ticking Audio Synthesizer
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            shuffleQuestions();
+            currentIndex = 0;
+            loadQuestion();
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            isTimerActive = document.getElementById('timerToggle').checked;
+            document.getElementById('settingsModal').classList.add('hidden');
+            if (!isTimerActive) {
+                clearInterval(timerInterval);
+                document.getElementById('timerDisplay').classList.add('hidden');
+            } else {
+                document.getElementById('timerDisplay').classList.remove('hidden');
+            }
         }
 
         function loadQuestion() {
             hasChosen = false;
+            clearInterval(timerInterval);
 
             if (currentIndex >= questionsList.length) {
                 shuffleQuestions();
@@ -224,37 +335,92 @@
             document.getElementById('barBlue').style.width = '0%';
 
             speakArabicMale(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
+
+            if (isTimerActive) {
+                startTimer();
+            }
         }
 
-        // محرك نطق باللغة العربية ونبرة صوت رجالية
-        function speakArabicMale(text) {
-            if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
+        // Ticking Sound Effect Synthesizer (صوت عقرب الساعة)
+        function playTickSound() {
+            if (!audioContext) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioContext.currentTime);
+            gain.gain.setValueAtTime(0.05, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start();
+            osc.stop(audioContext.currentTime + 0.05);
+        }
 
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ar-SA';
-            utterance.rate = 0.90; // سرعة القراءة
-            utterance.pitch = 0.75; // خفض النبرة لتعطي خامة صوت رجالي عميق
+        // Time Out Penalty Sound Effect
+        function playBuzzerSound() {
+            if (!audioContext) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, audioContext.currentTime);
+            gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start();
+            osc.stop(audioContext.currentTime + 0.4);
+        }
 
-            const voices = window.speechSynthesis.getVoices();
-            // تصفية الأصوات للغة العربية واختيار صوت رجالي
-            const arabicMaleVoice = voices.find(v => (v.lang.includes('ar') || v.lang.includes('ar-SA')) && (
-                v.name.toLowerCase().includes('male') || 
-                v.name.toLowerCase().includes('naayf') || 
-                v.name.toLowerCase().includes('maged') ||
-                v.name.toLowerCase().includes('tarik') ||
-                v.name.toLowerCase().includes('adam') ||
-                v.name.toLowerCase().includes('arabic')
-            )) || voices.find(v => v.lang.includes('ar'));
+        function startTimer() {
+            timeLeft = 10;
+            document.getElementById('timerText').innerText = timeLeft;
+            document.getElementById('timerText').classList.remove('text-red-500');
 
-            if (arabicMaleVoice) utterance.voice = arabicMaleVoice;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerText').innerText = timeLeft;
+                playTickSound();
 
-            window.speechSynthesis.speak(utterance);
+                if (timeLeft <= 3) {
+                    document.getElementById('timerText').classList.add('text-red-500');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            if (hasChosen) return;
+            hasChosen = true;
+            playBuzzerSound();
+
+            // Minus Penalty Point
+            scoreMinuses++;
+            document.getElementById('scoreMinus').innerText = scoreMinuses;
+
+            // Reveal Results Automatically
+            const q = questionsList[currentIndex];
+            document.getElementById('percentRed').innerText = q.redPercent + '%';
+            document.getElementById('percentBlue').innerText = q.bluePercent + '%';
+            document.getElementById('barRed').style.width = q.redPercent + '%';
+            document.getElementById('barBlue').style.width = q.bluePercent + '%';
+
+            document.getElementById('statsRed').classList.remove('hidden');
+            document.getElementById('statsBlue').classList.remove('hidden');
+            document.getElementById('nextPanel').classList.remove('hidden');
         }
 
         function makeChoice(choice) {
             if (hasChosen) return;
             hasChosen = true;
+            clearInterval(timerInterval);
+
+            // Win Point Score
+            scoreWins++;
+            document.getElementById('scoreWin').innerText = scoreWins;
 
             const q = questionsList[currentIndex];
             document.getElementById('percentRed').innerText = q.redPercent + '%';
@@ -273,33 +439,30 @@
             loadQuestion();
         }
 
-        document.getElementById('voiceToggle').addEventListener('click', () => {
-            isVoiceEnabled = !isVoiceEnabled;
-            document.getElementById('voiceStatus').innerText = isVoiceEnabled ? "القارئ العربي: مفعل" : "القارئ العربي: مكتوم";
-            document.getElementById('voiceIcon').className = isVoiceEnabled ? "fa-solid fa-volume-high text-amber-400" : "fa-solid fa-volume-xmark text-slate-500";
-            if (!isVoiceEnabled) {
-                window.speechSynthesis.cancel();
-            } else {
-                const q = questionsList[currentIndex];
-                speakArabicMale(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
-            }
-        });
+        // محرك نطق بالصوت الرجالي العربي
+        function speakArabicMale(text) {
+            const isVoiceChecked = document.getElementById('voiceToggleCheck').checked;
+            if (!isVoiceChecked || !('speechSynthesis' in window)) return;
 
-        // التأكد من تحميل أصوات النظام في المتصفح
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                if (questionsList.length > 0) {
-                    const q = questionsList[currentIndex];
-                    speakArabicMale(`لو خيروك: ${q.redText}... أو... ${q.blueText}`);
-                }
-            };
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ar-SA';
+            utterance.rate = 0.90;
+            utterance.pitch = 0.75;
+
+            const voices = window.speechSynthesis.getVoices();
+            const arabicMaleVoice = voices.find(v => (v.lang.includes('ar') || v.lang.includes('ar-SA')) && (
+                v.name.toLowerCase().includes('male') || 
+                v.name.toLowerCase().includes('naayf') || 
+                v.name.toLowerCase().includes('maged') ||
+                v.name.toLowerCase().includes('tarik') ||
+                v.name.toLowerCase().includes('arabic')
+            )) || voices.find(v => v.lang.includes('ar'));
+
+            if (arabicMaleVoice) utterance.voice = arabicMaleVoice;
+
+            window.speechSynthesis.speak(utterance);
         }
-
-        // Initialize Game On Load
-        window.onload = () => {
-            shuffleQuestions();
-            loadQuestion();
-        };
     </script>
 </body>
 </html>
